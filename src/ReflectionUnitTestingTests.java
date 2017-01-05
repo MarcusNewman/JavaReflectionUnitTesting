@@ -1,35 +1,39 @@
 import static org.junit.Assert.*;
-
+import java.lang.reflect.*;
 import org.junit.Test;
 
 public class ReflectionUnitTestingTests {
 	String className = "ReflectionAssert";
-	
+	String classExistsMethodName = "ClassExists";
+
 	@Test
-	public void ReflectionAssertClassShouldExist() {		
-		Class reflectionAssertClass = GetReflectionAssertClass();
-		assertNotNull(className + " class not found.", reflectionAssertClass);		
+	public void ReflectionAssertClassShouldExist() {
+		Class<?> reflectionAssertClass = getReflectionAssertClass();
+		assertNotNull(className + " class not found.", reflectionAssertClass);
 	}
-	
-	public Class GetReflectionAssertClass(){
+
+	public Class<?> getReflectionAssertClass() {
 		try {
 			return Class.forName("ReflectionUnitTesting." + className);
 		} catch (ClassNotFoundException e) {
 			return null;
 		}
 	}
-	
+
 	@Test
-	public void ClassShouldExistMethodShouldExist(){
-		String classExistsMethodName = "ClassExists";
-		Class reflectionAssertClass = GetReflectionAssertClass();
-		try{
-			reflectionAssertClass.getMethod(classExistsMethodName, null);
-		}
-		catch(NoSuchMethodException e){
-			fail(classExistsMethodName + " method doesn't exist.");
-		}
-		
+	public void ClassExistsMethodShouldExistAndAcceptAString() {
+		Method classExistsMethod = getClassExistsMethod();
+		assertNotNull(classExistsMethodName + " method doesn't exist or doesn't accept a string.", classExistsMethod);
+
 	}
 
+	private Method getClassExistsMethod() {
+		Class<?> reflectionAssertClass = getReflectionAssertClass();
+		Class<?>[] parameterTypes = { String.class };
+		try {
+			return reflectionAssertClass.getMethod(classExistsMethodName, parameterTypes);
+		} catch (NoSuchMethodException e) {
+			return null;
+		}
+	}
 }

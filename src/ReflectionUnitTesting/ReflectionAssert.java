@@ -1,6 +1,6 @@
 package ReflectionUnitTesting;
 
 public class ReflectionAssert {
-	public void ClassExists() {
+	public void ClassExists(String className) {
 	}
 }
