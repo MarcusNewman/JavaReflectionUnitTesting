@@ -36,4 +36,12 @@ public class ReflectionUnitTestingTests {
 			return null;
 		}
 	}
+
+	@Test
+	public void ClassExistsMethodReturnTypeShouldBeClass() {
+		Method classExistsMethod = getClassExistsMethod();
+		Object result = classExistsMethod.getReturnType();
+		assertTrue("ClassExists method return type should be Class.", result == Class.class);
+	}
+
 }
