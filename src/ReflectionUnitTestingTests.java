@@ -34,26 +34,26 @@ public class ReflectionUnitTestingTests {
 	}
 
 	@Test
-	public void MethodExistsMethodShouldExistAndAcceptAString() {
+	public void MethodExistsMethodShouldExistAndAcceptAClassAStringAndAParameterArray() {
 		Method methodExistsMethod = getMethodExistsMethod();
-		assertNotNull(classExistsMethodName + " method doesn't exist or doesn't accept a string.", methodExistsMethod);
+		assertNotNull(classExistsMethodName + " method doesn't exist or doesn't accept a Class, a string, and parameter types.", methodExistsMethod);
 
 	}
 
 	private Method getClassExistsMethod() {
 		String methodName = classExistsMethodName;
-		return getMethodWithStringParameter(methodName);
+		Class<?>[] parameterTypes = { String.class };
+		return getMethodWithParameters(methodName, parameterTypes);
 	}
 
 	private Method getMethodExistsMethod() {
 		String methodName = methodExistsMethodName;
-		return getMethodWithStringParameter(methodName);
+		Class<?>[] parameterTypes = {Class.class, String.class, Class[].class};
+		return getMethodWithParameters(methodName, parameterTypes);
 	}
 
-	private Method getMethodWithStringParameter(String className) {
-
+	private Method getMethodWithParameters(String className, Class<?>[] parameterTypes) {
 		Class<?> reflectionAssertClass = getReflectionAssertClass();
-		Class<?>[] parameterTypes = { String.class };
 		try {
 			return reflectionAssertClass.getMethod(className, parameterTypes);
 		} catch (NoSuchMethodException e) {
@@ -89,5 +89,44 @@ public class ReflectionUnitTestingTests {
 		} catch (InvocationTargetException e) {
 			fail("ClassExists method should not throw an exception with a valid class name.");
 		}
+	}
+	
+	@Test(expected = AssertionFailedError.class)
+	public void MethodExistsMethodShouldThrowAnAssertionFailedErrorWithAnInvalidMethodName() throws Throwable {
+		thrown.reportMissingExceptionWithMessage(
+				"MethodExists method should throw an assertionFailedError with an invalid class or method name.");
+		String invalidMethodName = "InvalidMethodName";
+		Class<?> reflectionAssertClass = getReflectionAssertClass();
+		Method methodExistsMethod = getMethodExistsMethod();
+		Object[] args = {reflectionAssertClass.getClass(), invalidMethodName, null };
+		try {
+			methodExistsMethod.invoke(reflectionAssertClass.newInstance(), args);
+		} catch (InvocationTargetException e) {
+			throw e.getTargetException();
+		}
+	}
+
+	@Test
+	public void MethodExistsMethodShouldNotThrowAnExceptionWithAValidClassMethodNameAndParameters() {
+		Class<?> reflectionAssertClass = getReflectionAssertClass();
+		Method methodExistsMethod = getMethodExistsMethod();
+		Object[] args = {reflectionAssertClass.getClass(), classExistsMethodName, new Class<?>[]{String.class}};
+		
+			try {
+				methodExistsMethod.invoke(reflectionAssertClass, args);
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				fail("MethodExists method should not throw an exception with a valid class, method name and parameters");
+			}
+//		} catch (InvocationTargetException e) {
+//			
+//		}
 	}
 }

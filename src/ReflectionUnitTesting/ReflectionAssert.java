@@ -14,7 +14,8 @@ public class ReflectionAssert {
 	 * doesn't it throws an {@link AssertionFailedError}.
 	 *
 	 * @param className
-	 *            the name of the class, including package name.
+	 *            The name of the class, including package name.
+	 * @throws AssertionFailedError
 	 */
 	public void ClassExists(String className) {
 		try {
@@ -26,11 +27,21 @@ public class ReflectionAssert {
 
 	/**
 	 * Method that tests for the existence of a Method using reflection. If it
-	 * does not it throws an {@link AssertionError}.
+	 * doesn't exist it throws an {@link AssertionFailedError}.
 	 * 
+	 * @param classType
+	 *            The type of class containing the method to check.
 	 * @param methodName
+	 *            The name of the method to check.
+	 * @param args
+	 *            The types of parameters expected on the method.
+	 * @throws AssertionFailedError
 	 */
-	public void MethodExists(String methodName) {
-
+	public void MethodExists(Class<?> classType, String methodName, Class<?>... args) {
+		try {
+			classType.getMethod(methodName, args);
+		} catch (NoSuchMethodException e) {
+			throw new AssertionFailedError();
+		}
 	}
 }
